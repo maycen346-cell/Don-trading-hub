@@ -1,0 +1,874 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeFlow · realistic trading UI</title>
+    <!-- Fonts & icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0b0e14;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+            color: #eaeef2;
+        }
+
+        /* main dashboard card */
+        .dashboard {
+            max-width: 1400px;
+            width: 100%;
+            background: #131920;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.03);
+            padding: 1.75rem 2rem 2rem 2rem;
+            border: 1px solid #2a313c;
+            transition: all 0.2s ease;
+        }
+
+        /* ----- top bar ----- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+            box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(to right, #f0f4ff, #b9c7e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-bar {
+            background: #1c232c;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border: 1px solid #2f3846;
+            transition: all 0.2s;
+            min-width: 260px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
+        .search-bar i {
+            color: #8b99ab;
+            font-size: 0.9rem;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: #eaeef2;
+            font-size: 0.9rem;
+            font-weight: 400;
+            width: 100%;
+            outline: none;
+            letter-spacing: 0.2px;
+        }
+
+        .search-bar input::placeholder {
+            color: #5f6b7b;
+            font-weight: 400;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .notification-badge {
+            position: relative;
+            color: #9aa8b9;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .notification-badge:hover {
+            color: #ffffff;
+        }
+
+        .notification-badge::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
+            background: #f97316;
+            border-radius: 50%;
+            border: 2px solid #131920;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #1c232c;
+            padding: 0.35rem 0.35rem 0.35rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #2f3846;
+            cursor: default;
+        }
+
+        .user-profile span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        .avatar {
+            background: linear-gradient(145deg, #2d3b4b, #1e2a36);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #93c5fd;
+            border: 1.5px solid #3b82f6;
+        }
+
+        /* ----- balance row ----- */
+        .balance-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .balance-card {
+            background: #0f151d;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid #232b36;
+            box-shadow: 0 6px 14px -4px rgba(0, 0, 0, 0.6);
+            transition: transform 0.15s, border-color 0.2s;
+        }
+
+        .balance-card:hover {
+            border-color: #3b4b5e;
+            transform: translateY(-2px);
+        }
+
+        .balance-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #7d8b9f;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .balance-value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .balance-change {
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(34, 197, 94, 0.12);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            color: #4ade80;
+        }
+
+        .balance-change.negative {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+        }
+
+        /* ----- main trading grid ----- */
+        .trading-grid {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 1.8rem;
+            margin-bottom: 1.8rem;
+        }
+
+        /* chart panel */
+        .chart-panel {
+            background: #0f151d;
+            border-radius: 24px;
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+            border: 1px solid #232b36;
+            box-shadow: 0 10px 20px -8px #00000080;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .pair-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pair-icon {
+            background: #1e2a36;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #facc15;
+            border: 1px solid #3b4b5e;
+        }
+
+        .pair-name {
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: -0.3px;
+        }
+
+        .pair-sub {
+            font-size: 0.8rem;
+            color: #8b99ab;
+            margin-top: 0.2rem;
+        }
+
+        .price-big {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .price-change {
+            font-size: 0.9rem;
+            background: #1e2a36;
+            padding: 0.25rem 0.75rem;
+            border-radius: 40px;
+            color: #4ade80;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        /* lightweight chart simulation */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            margin: 1rem 0 0.5rem 0;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #232b36;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #3b82f6, #60a5fa);
+            border-radius: 4px 4px 2px 2px;
+            min-height: 4px;
+            transition: height 0.2s;
+            opacity: 0.9;
+        }
+
+        .chart-bar.high {
+            background: linear-gradient(to top, #22c55e, #4ade80);
+        }
+
+        .chart-bar.low {
+            background: linear-gradient(to top, #ef4444, #f87171);
+        }
+
+        .chart-axis {
+            display: flex;
+            justify-content: space-between;
+            color: #5f6b7b;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0 4px;
+            letter-spacing: 0.3px;
+        }
+
+        /* order book side */
+        .order-panel {
+            background: #0f151d;
+            border-radius: 24px;
+            padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+            border: 1px solid #232b36;
+            box-shadow: 0 10px 20px -8px #00000080;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .order-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: #b9c7e0;
+        }
+
+        .order-type-badge {
+            background: #1e2a36;
+            border-radius: 20px;
+            padding: 0.25rem 0.9rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #93c5fd;
+            border: 1px solid #2f3f51;
+        }
+
+        .order-book {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.1s;
+        }
+
+        .order-row:hover {
+            background: #1c232c;
+        }
+
+        .order-row.sell .price {
+            color: #f87171;
+        }
+
+        .order-row.buy .price {
+            color: #4ade80;
+        }
+
+        .order-row .amount {
+            color: #9aa8b9;
+        }
+
+        .order-row .total {
+            color: #6f7e92;
+        }
+
+        .divider {
+            border-top: 1px solid #232b36;
+            margin: 0.6rem 0;
+        }
+
+        /* action buttons */
+        .trade-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.85rem 0;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-buy {
+            background: #0e2a1f;
+            color: #4ade80;
+            border: 1px solid #2b5e3b;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+        }
+
+        .btn-buy:hover {
+            background: #1a3a2b;
+            border-color: #4ade80;
+            color: #86efac;
+            transform: translateY(-1px);
+        }
+
+        .btn-sell {
+            background: #2a161a;
+            color: #f87171;
+            border: 1px solid #622a2f;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-sell:hover {
+            background: #3a1e23;
+            border-color: #f87171;
+            color: #fca5a5;
+            transform: translateY(-1px);
+        }
+
+        /* bottom positions table */
+        .positions-section {
+            background: #0f151d;
+            border-radius: 22px;
+            border: 1px solid #232b36;
+            padding: 1.2rem 1.5rem 0.8rem 1.5rem;
+            box-shadow: 0 10px 20px -8px #00000080;
+        }
+
+        .positions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .positions-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #b9c7e0;
+        }
+
+        .positions-header a {
+            color: #3b82f6;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .positions-header a:hover {
+            text-decoration: underline;
+        }
+
+        .position-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+            padding: 0.8rem 0.5rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #1e262f;
+            align-items: center;
+        }
+
+        .position-row.header-row {
+            color: #6f7e92;
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #232b36;
+        }
+
+        .position-row:last-child {
+            border-bottom: none;
+        }
+
+        .position-pair {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .position-pair i {
+            color: #facc15;
+            font-size: 0.9rem;
+        }
+
+        .green {
+            color: #4ade80;
+        }
+
+        .red {
+            color: #f87171;
+        }
+
+        .position-row .badge {
+            background: #1e2a36;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .badge.long {
+            color: #4ade80;
+            background: #0e2a1f;
+        }
+
+        .badge.short {
+            color: #f87171;
+            background: #2a161a;
+        }
+
+        /* responsive */
+        @media (max-width: 900px) {
+            .dashboard {
+                padding: 1.5rem;
+            }
+            .trading-grid {
+                grid-template-columns: 1fr;
+            }
+            .balance-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .position-row {
+                grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .balance-row {
+                grid-template-columns: 1fr;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-bar {
+                min-width: auto;
+            }
+            .position-row {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- top navigation -->
+        <div class="top-bar">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+                <div class="logo-text">TradeFlow</div>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search markets, pairs, or assets...">
+            </div>
+            <div class="user-actions">
+                <div class="notification-badge"><i class="fas fa-bell"></i></div>
+                <div class="user-profile">
+                    <span>Alex Chen</span>
+                    <div class="avatar">AC</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- balance cards -->
+        <div class="balance-row">
+            <div class="balance-card">
+                <div class="balance-label">Total balance <i class="fas fa-chevron-down" style="color:#5f6b7b; font-size:0.7rem;"></i></div>
+                <div class="balance-value">$24,860.42</div>
+                <div class="balance-change"><i class="fas fa-arrow-up"></i> +5.32%</div>
+            </div>
+            <div class="balance-card">
+                <div class="balance-label">Available margin</div>
+                <div class="balance-value">$18,245.80</div>
+                <div class="balance-change" style="background:rgba(59,130,246,0.12); color:#60a5fa;"><i class="fas fa-chart-line"></i> 73.4%</div>
+            </div>
+            <div class="balance-card">
+                <div class="balance-label">Unrealized PnL</div>
+                <div class="balance-value">+$1,482.30</div>
+                <div class="balance-change"><i class="fas fa-arrow-up"></i> +2.18%</div>
+            </div>
+            <div class="balance-card">
+                <div class="balance-label">Daily volume</div>
+                <div class="balance-value">$8,930.00</div>
+                <div class="balance-change negative"><i class="fas fa-arrow-down"></i> -1.24%</div>
+            </div>
+        </div>
+
+        <!-- main grid: chart + orderbook -->
+        <div class="trading-grid">
+            <!-- chart panel -->
+            <div class="chart-panel">
+                <div class="panel-header">
+                    <div class="pair-info">
+                        <div class="pair-icon"><i class="fab fa-bitcoin"></i></div>
+                        <div>
+                            <div class="pair-name">BTC / USD</div>
+                            <div class="pair-sub">Bitcoin · Spot</div>
+                        </div>
+                    </div>
+                    <div class="price-big">
+                        $67,842.50
+                        <span class="price-change"><i class="fas fa-arrow-up"></i> 2.34%</span>
+                    </div>
+                </div>
+
+                <!-- simple realistic candlestick-style bar chart (simulated) -->
+                <div class="chart-container" id="chartBars">
+                    <!-- bars will be injected via JS -->
+                </div>
+                <div class="chart-axis">
+                    <span>09:00</span>
+                    <span>12:00</span>
+                    <span>15:00</span>
+                    <span>18:00</span>
+                    <span>21:00</span>
+                </div>
+            </div>
+
+            <!-- order book panel -->
+            <div class="order-panel">
+                <div class="order-header">
+                    <h3><i class="fas fa-book-open" style="margin-right: 6px; font-size:0.9rem;"></i> Order book</h3>
+                    <span class="order-type-badge">BTC/USD</span>
+                </div>
+
+                <div class="order-book">
+                    <!-- sell orders (red) -->
+                    <div class="order-row sell">
+                        <span class="price">67,955.20</span>
+                        <span class="amount">0.324</span>
+                        <span class="total">$22,017</span>
+                    </div>
+                    <div class="order-row sell">
+                        <span class="price">67,940.10</span>
+                        <span class="amount">0.152</span>
+                        <span class="total">$10,326</span>
+                    </div>
+                    <div class="order-row sell">
+                        <span class="price">67,921.80</span>
+                        <span class="amount">0.873</span>
+                        <span class="total">$59,298</span>
+                    </div>
+                    <div class="divider"></div>
+                    <!-- spread & last price -->
+                    <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; font-size:0.85rem; font-weight:600;">
+                        <span style="color:#b9c7e0;">Spread</span>
+                        <span style="color:#facc15;">0.08%</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:0.3rem 0.6rem; font-size:0.9rem; font-weight:700;">
+                        <span style="color:#4ade80;">67,842.50</span>
+                        <span style="color:#9aa8b9;">≈ $67,842</span>
+                    </div>
+                    <div class="divider"></div>
+                    <!-- buy orders (green) -->
+                    <div class="order-row buy">
+                        <span class="price">67,812.40</span>
+                        <span class="amount">0.421</span>
+                        <span class="total">$28,559</span>
+                    </div>
+                    <div class="order-row buy">
+                        <span class="price">67,790.50</span>
+                        <span class="amount">0.215</span>
+                        <span class="total">$14,575</span>
+                    </div>
+                    <div class="order-row buy">
+                        <span class="price">67,765.30</span>
+                        <span class="amount">1.032</span>
+                        <span class="total">$69,942</span>
+                    </div>
+                </div>
+
+                <div class="trade-actions">
+                    <button class="btn btn-buy"><i class="fas fa-arrow-up"></i> Buy</button>
+                    <button class="btn btn-sell"><i class="fas fa-arrow-down"></i> Sell</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- positions / open orders -->
+        <div class="positions-section">
+            <div class="positions-header">
+                <h3><i class="fas fa-chart-pie" style="margin-right: 6px;"></i> Open positions</h3>
+                <a href="#">View all <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+            </div>
+
+            <div class="position-row header-row">
+                <span>Pair</span>
+                <span>Size</span>
+                <span>Entry</span>
+                <span>P&L</span>
+                <span>Type</span>
+            </div>
+
+            <div class="position-row">
+                <span class="position-pair"><i class="fab fa-ethereum"></i> ETH/USD</span>
+                <span>2.45 ETH</span>
+                <span>$3,120.50</span>
+                <span class="green">+$142.30</span>
+                <span class="badge long">Long</span>
+            </div>
+
+            <div class="position-row">
+                <span class="position-pair"><i class="fas fa-dollar-sign" style="color:#4ade80;"></i> SOL/USD</span>
+                <span>18.2 SOL</span>
+                <span>$142.30</span>
+                <span class="green">+$28.75</span>
+                <span class="badge long">Long</span>
+            </div>
+
+            <div class="position-row">
+                <span class="position-pair"><i class="fab fa-bitcoin"></i> BTC/USD</span>
+                <span>0.12 BTC</span>
+                <span>$68,200.00</span>
+                <span class="red">-$42.90</span>
+                <span class="badge short">Short</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---- generate a realistic-looking chart with random-ish bars (simulating price action) ----
+            const chartContainer = document.getElementById('chartBars');
+            const barCount = 28; // number of candlestick-like bars
+
+            // base heights to create a natural trend (bitcoin-like)
+            const basePattern = [25, 30, 28, 35, 42, 50, 48, 55, 62, 58, 65, 72, 68, 75, 82, 78, 85, 90, 86, 94, 100, 96, 88, 92, 97, 102, 106, 110];
+
+            // clear any existing
+            chartContainer.innerHTML = '';
+
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'chart-bar';
+
+                // determine height: use base pattern + some randomness to look organic
+                let baseHeight = basePattern[i] || 60;
+                // add small random variation
+                let randomFactor = 0.9 + Math.random() * 0.25; // between 0.9 and 1.15
+                let height = Math.round(baseHeight * randomFactor);
+                // clamp between 8 and 115 for visual variety
+                height = Math.min(115, Math.max(10, height));
+
+                bar.style.height = height + 'px';
+
+                // give some bars green/red accent based on a simulated up/down
+                // last 5 bars more likely to be higher (trend)
+                const trendIndex = i / barCount; // 0..1
+                if (trendIndex > 0.6 && Math.random() > 0.4) {
+                    bar.classList.add('high'); // greenish
+                } else if (trendIndex < 0.3 && Math.random() > 0.6) {
+                    bar.classList.add('low'); // reddish
+                } else {
+                    // neutral blue — keep default
+                }
+
+                // slight opacity variation for depth
+                bar.style.opacity = 0.7 + Math.random() * 0.3;
+
+                chartContainer.appendChild(bar);
+            }
+
+            // ---- add subtle hover effect to order rows and position rows (UX) ----
+            // already styled via CSS, but we can add small feedback for buttons if needed
+
+            // ---- simulate live price ticker update (very lightweight, just for realism) ----
+            const priceElement = document.querySelector('.price-big');
+            const originalPriceText = priceElement.innerHTML;
+            // extract the number part
+            let priceValue = 67842.50;
+
+            setInterval(() => {
+                // small fluctuation, +/- 0.05%
+                const change = (Math.random() - 0.5) * 18; // around +/- 9 dollars
+                priceValue += change;
+                // format with 2 decimals and commas
+                const formatted = priceValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                // update the text, keep the price-change span
+                // rebuild innerHTML carefully
+                priceElement.innerHTML = `$${formatted} <span class="price-change"><i class="fas fa-arrow-up"></i> 2.34%</span>`;
+
+                // optionally also update the "last price" in order book? Not necessary.
+            }, 4500); // every 4.5 seconds
+
+            // tiny detail: make some order rows blink on update? Not needed but could be fun — skip for realism.
+
+            // also update some balance change randomly? no, keep stable.
+
+            // animate chart bars occasionally (very subtle height change)
+            setInterval(() => {
+                const bars = document.querySelectorAll('.chart-bar');
+                if (bars.length > 5) {
+                    // pick a random bar and nudge its height
+                    const randomIndex = Math.floor(Math.random() * bars.length);
+                    const bar = bars[randomIndex];
+                    const currentHeight = parseInt(bar.style.height);
+                    if (!isNaN(currentHeight)) {
+                        let newHeight = currentHeight + (Math.random() > 0.5 ? 3 : -3);
+                        newHeight = Math.min(120, Math.max(10, newHeight));
+                        bar.style.height = newHeight + 'px';
+                    }
+                }
+            }, 2000);
+        })();
+    </script>
+</body>
+</html>
